@@ -23,13 +23,23 @@ def say_hello():
     engine.say("Hola, ¿En que puedo ayudarte?")
     engine.runAndWait()
 
+def mostrar_img(imga):
+    img = cv2.imread(imga)  # Leemos el archivo almacenado en la carpeta local con el nombre indicado
+    # lo almacenamos en img
+    print("Informacion :D")  # opcionalmente imprimimos un mensaje por consola
+    cv2.imshow("Foto", img)  # Mostramos una ventana con el nombre de Foto y lo almacenado en img
+    cv2.waitKey(1)
+
+
+
+
 
 # Función para escuchar la respuesta del usuario
 def listen_response():
     with sr.Microphone() as source:
         print("Di algo...")
         try:
-            audio = recognizer.listen(source, timeout=2)
+            audio = recognizer.listen(source, phrase_time_limit=5)
             response = recognizer.recognize_google(audio, language='es-ES')
             print("Usuario dijo:", response)
             response_lower = response.lower()
@@ -48,6 +58,7 @@ def listen_response():
 
 def choose_response(option):
     if any(keyword in option for keyword in ['hola', 'rogelio', 'saludo']):
+        mostrar_img("qrU.png")
         return random.choice(["Qué bien!", "Genial!", "Me alegro!"])
     elif 'servicio' in option:
         return "Mostrando QR del servicio social."

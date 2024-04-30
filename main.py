@@ -49,7 +49,7 @@ def choose_response(option):
 
 
 # Capturar video desde la cámara
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 while True:
     # Leer el fotograma
     ret, frame = cap.read()

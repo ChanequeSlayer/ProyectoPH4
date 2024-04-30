@@ -12,6 +12,10 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 
 # Variable para controlar si ya se ha dicho "Hola" o no
 said_hello = False
+# Variable para controlar la detección de rostros
+detect_faces = True
+# Temporizador para controlar la detección de rostros después de hablar
+#last_response_time = time.time()
 
 def mostrar_img(imga):
     img = cv2.imread(imga)  # Leemos el archivo almacenado en la carpeta local con el nombre indicado
@@ -33,7 +37,7 @@ def listen_response():
     with sr.Microphone() as source:
         print("Di algo...")
         try:
-            audio = recognizer.listen(source, timeout=10)
+            audio = recognizer.listen(source,phrase_time_limit=5)
             response = recognizer.recognize_google(audio, language='es-ES')
             return response
         except sr.WaitTimeoutError:
