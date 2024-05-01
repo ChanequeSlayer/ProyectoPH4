@@ -58,7 +58,7 @@ def listen_response():
 
 def choose_response(option):
     if any(keyword in option for keyword in ['hola', 'rogelio', 'saludo']):
-        mostrar_img("qrU.png")
+        mostrar_img("Croquis.png")
         return random.choice(["Qué bien!", "Genial!", "Me alegro!"])
     elif 'servicio' in option:
         return "Mostrando QR del servicio social."
