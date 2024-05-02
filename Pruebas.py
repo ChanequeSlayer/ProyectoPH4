@@ -30,10 +30,6 @@ def mostrar_img(imga):
     cv2.imshow("Foto", img)  # Mostramos una ventana con el nombre de Foto y lo almacenado en img
     cv2.waitKey(1)
 
-
-
-
-
 # Función para escuchar la respuesta del usuario
 def listen_response():
     with sr.Microphone() as source:
@@ -58,7 +54,6 @@ def listen_response():
 
 def choose_response(option):
     if any(keyword in option for keyword in ['hola', 'rogelio', 'saludo']):
-        mostrar_img("Croquis.png")
         return random.choice(["Qué bien!", "Genial!", "Me alegro!"])
     elif 'servicio' in option:
         return "Mostrando QR del servicio social."
@@ -89,11 +84,23 @@ while True:
                 # Esperar respuesta del usuario
                 response, is_service = listen_response()
                 if response:
-                    if is_service:
-                        # Realizar la acción correspondiente al servicio
-                        # Aquí puedes agregar el código para la acción que deseas realizar
-                        print("Mostrando QR en pantalla.")
+                    if 'posgrado' in response.lower():
+                        mostrar_img("Posgrado.jpeg")
+                        print("Has seleccionado Posgrado.")
+                    elif 'mapa' in response.lower():
+                        mostrar_img("Croquis.png")
+                        print("Has seleccionado Salones.")
+                    elif 'titulación' in response.lower():
+                        mostrar_img("Titulacion.jpeg")
+                        print("Has seleccionado Titulación.")
+                    elif 'servicio social' in response.lower():
+                        mostrar_img("Servicio.jpeg")
+                        print("Has seleccionado Servicio Social.")
+                    elif 'residencias' in response.lower():
+                        mostrar_img("Residencias.jpeg")
+                        print("Has seleccionado Recidencias.")
                     else:
+                        print("No se reconoció la opción.")
                         response_lower = response.lower()
                         if 'hola' in response_lower or 'rogelio' in response_lower or 'saludo' in response_lower:
                             chosen_response = choose_response(response_lower)
