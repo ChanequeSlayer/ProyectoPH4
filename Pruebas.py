@@ -10,7 +10,7 @@
 #        Victor Andres Garduño Ramos
 # Fecha: 03 de mayo de 2024
 
-
+''
 # Se importan las librerías necesarias para el funcionamiento del programa
 import cv2
 import pyttsx3
@@ -65,17 +65,61 @@ def say_bye():
     print("2: Volver al menu\n")
     engine.runAndWait()
 
+def mostrar_fondo():
+    img = cv2.imread("fondo.jpeg")  # Leemos el archivo almacenado en la carpeta local con el nombre indicado
+
+    # Creamos una ventana con el nombre "Foto" y configuramos para que sea pantalla completa
+    cv2.namedWindow("fondo", cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty("fondo", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
+    # Mostramos la imagen centrada en la ventana
+    cv2.imshow("fondo", img)
+
+
+
 # Función para mostrar una imagen en pantalla
-def mostrar_img(imga):
+def mostrar_img(imga,tipo):
     img = cv2.imread(imga)  # Leemos el archivo almacenado en la carpeta local con el nombre indicado
-    cv2.imshow("Foto", img)  # Mostramos una ventana con el nombre de Foto y lo almacenado en img
-    cv2.waitKey(1)
+    if tipo == 1:
+        print("Paso por aqui")
+        # Creamos una ventana con el nombre "Foto" y configuramos para que sea pantalla completa
+        cv2.namedWindow("Foto", cv2.WINDOW_NORMAL)
+        cv2.setWindowProperty("Foto", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
+        # Mostramos la imagen centrada en la ventana
+        cv2.imshow("Foto", img)
+
+        cv2.waitKey(20000)  # Esperamos 1 minuto (60,000 milisegundos)
+        cv2.destroyWindow("Foto")  # Cerramos la ventana del codigo QR y del mapa en si.
+    else:
+        print("Paso por aca.")
+        img = cv2.imread(imga)
+
+        # Obtener las dimensiones de la imagen
+        height, width, _ = img.shape
+
+        # Crear una ventana con el nombre "Imagen con QR"
+        cv2.namedWindow("qr", cv2.WINDOW_NORMAL)
+
+        # Redimensionar la ventana para que coincida con el tamaño de la imagen
+        cv2.resizeWindow("qr", width, height)
+
+        # Mostramos la imagen centrada en la ventana
+        cv2.imshow("qr", img)
+
+        cv2.waitKey(20000)  # Esperamos 1 minuto (60,000 milisegundos)
+        cv2.destroyWindow("qr")  # Cerramos la ventana del codigo QR y del mapa en si.
+
+
+
+
 
 # Función para escuchar la respuesta del usuario
 def listen_response():
     # Escucha la respuesta del usuario
     with sr.Microphone() as source:
         print("Di algo...")
+        engine.say("Te escucho...")
         try:
             # Escuchar la respuesta del usuario durante 5 segundos
             audio = recognizer.listen(source, phrase_time_limit=5)
@@ -95,6 +139,13 @@ def listen_response():
 
 # Capturar video desde la cámara
 cap = cv2.VideoCapture(0)
+start_time = None
+
+mostrar_fondo()
+
+
+#PRIMERA PARTE, ESTO LO PUEDO DECIR YO, O TU, COMO QUIERAS.
+
 
 while True:
     # Leer el fotograma
@@ -104,181 +155,197 @@ while True:
     if detect_faces:
         # Detectar rostros solo si detect_faces es True
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+
         if len(faces) > 0:
-            # Dar la binevenida si se detecta un rostro
-            respuesta = True
-            if not said_hello:
-                say_hello() # Dar la bienvenida y mostrar las opciones
-                salir = False # Variable para controlar si se selecciona salir
-                said_hello = True # Actualizar la variable para no volver a dar la bienvenida
-                detect_faces = False  # Detener la detección de rostros
-                # Esperar respuesta del usuario
-                response = listen_response()
-                # Verificar si se detectó una respuesta
-                if response:
-                    # Verificar la respuesta del usuario
-                    if 'mapa del edificio' in response.lower():
-                        # Mostrar el mapa del edificio
-                        engine.say("Has seleccionado Mapa del edificio")
-                        engine.say("Se mostrará el mapa del edificio en la pantalla")
-                        engine.runAndWait()
-                        print("Has seleccionado Mapa del edificio.\n")
-                        # Mostrar la imagen del mapa del edificio
-                        mostrar_img("Croquis.jpeg")
-                        # Actualizar la variable para no volver a dar la bienvenida
-                        time.sleep(5)
-                        while respuesta:
-                            # Preguntar si se desea salir o volver al menú
-                            say_bye()
-                            response = listen_response()
-                            if response:
-                                if "salir" in response.lower():
-                                    engine.say("Has seleccionado salir")
-                                    engine.runAndWait()
-                                    print("Has seleccionado salir.\n")
-                                    respuesta = False
-                                    salir = True
-                                    break
-                                elif "volver al menú" in response.lower():
-                                    engine.say("Has seleccionado volver al menu")
-                                    engine.runAndWait()
-                                    print("Has seleccionado volver al menu.\n")
-                                    said_hello = False
-                                    break
-                                else:
-                                    print("No se reconoció la opción.\n")
-                                    engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
-                                    engine.runAndWait()                    
-                    elif 'posgrado' in response.lower():
-                        engine.say("Has seleccionado posgrado")
-                        engine.say("Se mostrará un QR en la pantalla")
-                        engine.runAndWait()
-                        print("Has seleccionado Posgrado.\n")
-                        mostrar_img("Posgrado.jpeg")
-                        said_hello = False
-                        time.sleep(5)
-                        while respuesta:
-                            say_bye()
-                            response = listen_response()
-                            if response:
-                                if "salir" in response.lower():
-                                    engine.say("Has seleccionado salir")
-                                    engine.runAndWait()
-                                    print("Has seleccionado salir.\n")
-                                    respuesta = False
-                                    salir = True
-                                    break
-                                elif "volver al menú" in response.lower():
-                                    engine.say("Has seleccionado volver al menu")
-                                    engine.runAndWait()
-                                    print("Has seleccionado volver al menu.\n")
-                                    said_hello = False
-                                    break
-                                else:
-                                    print("No se reconoció la opción.\n")
-                                    engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
-                                    engine.runAndWait()
-                    elif 'titulación' in response.lower():
-                        engine.say("Has seleccionado titulación")
-                        engine.say("Se mostrará un QR en la pantalla")
-                        engine.runAndWait()
-                        print("Has seleccionado Titulación.\n")
-                        mostrar_img("Titulacion.jpeg")
-                        said_hello = False
-                        time.sleep(5)
-                        while respuesta:
-                            say_bye()
-                            response = listen_response()
-                            if response:
-                                if "salir" in response.lower():
-                                    engine.say("Has seleccionado salir")
-                                    engine.runAndWait()
-                                    print("Has seleccionado salir.\n")
-                                    respuesta = False
-                                    salir = True
-                                    break
-                                elif "volver al menú" in response.lower():
-                                    engine.say("Has seleccionado volver al menu")
-                                    engine.runAndWait()
-                                    print("Has seleccionado volver al menu.\n")
-                                    said_hello = False
-                                    break
-                                else:
-                                    print("No se reconoció la opción.\n")
-                                    engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
-                                    engine.runAndWait()
-                    elif 'servicio' in response.lower():
-                        engine.say("Has seleccionado servicio")
-                        engine.say("Se mostrará un QR en la pantalla")
-                        engine.runAndWait()
-                        print("Has seleccionado Servicio Social.\n")
-                        mostrar_img("Servicio.jpeg")
-                        said_hello = False
-                        time.sleep(5)
-                        while respuesta:
-                            say_bye()
-                            response = listen_response()
-                            if response:
-                                if "salir" in response.lower():
-                                    engine.say("Has seleccionado salir")
-                                    engine.runAndWait()
-                                    print("Has seleccionado salir.\n")
-                                    respuesta = False
-                                    salir = True
-                                    break
-                                elif "volver al menú" in response.lower():
-                                    engine.say("Has seleccionado volver al menu")
-                                    engine.runAndWait()
-                                    print("Has seleccionado volver al menu.\n")
-                                    said_hello = False
-                                    break
-                                else:
-                                    print("No se reconoció la opción.\n")
-                                    engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
-                                    engine.runAndWait()
-                    elif 'residencias' in response.lower():
-                        engine.say("Has seleccionado residencias")
-                        engine.say("Se mostrará un QR en la pantalla")
-                        engine.runAndWait()
-                        print("Has seleccionado Residencias.\n")
-                        mostrar_img("Residencias.jpeg")
-                        said_hello = False
-                        time.sleep(5)
-                        while respuesta:
-                            say_bye()
-                            response = listen_response()
-                            if response:
-                                if "salir" in response.lower():
-                                    engine.say("Has seleccionado salir")
-                                    engine.runAndWait()
-                                    print("Has seleccionado salir.\n")
-                                    respuesta = False
-                                    salir = True
-                                    break
-                                elif "volver al menú" in response.lower():
-                                    engine.say("Has seleccionado volver al menu")
-                                    engine.runAndWait()
-                                    print("Has seleccionado volver al menu.\n")
-                                    said_hello = False
-                                    break
-                                else:
-                                    print("No se reconoció la opción.\n")
-                                    engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
-                                    engine.runAndWait()
-                    elif 'salir' in response.lower():
-                        engine.say("Has seleccionado salir")
-                        engine.runAndWait()
-                        print("Has seleccionado salir.\n")
+            # Si es la primera vez que se detecta un rostro, registrar el tiempo
+            if start_time is None:
+                start_time = time.time()
+            else:
+                # Calcular la duración desde que se detectó el rostro
+                duration = time.time() - start_time
+                # Mostrar el mensaje después de 5 segundos
+                if duration >= 5:
+                    # Dar la binevenida si se detecta un rostro
+                    respuesta = True
+                    if not said_hello:
+                        say_hello()  # Dar la bienvenida y mostrar las opciones
+                        salir = False  # Variable para controlar si se selecciona salir
+                        said_hello = True  # Actualizar la variable para no volver a dar la bienvenida
+                        detect_faces = False  # Detener la detección de rostros
+                        # Esperar respuesta del usuario
+                        response = listen_response()
+                        # Verificar si se detectó una respuesta
+                        if response:
+                            # Verificar la respuesta del usuario
+                            if 'mapa del edificio' in response.lower():
+                                # Mostrar el mapa del edificio
+                                engine.say("Has seleccionado Mapa del edificio")
+                                engine.say("Se mostrará el mapa del edificio en la pantalla")
+                                engine.runAndWait()
+                                print("Has seleccionado Mapa del edificio.\n")
+                                # Mostrar la imagen del mapa del edificio
+                                mostrar_img("Croquis.jpeg", 1)
+                                # Actualizar la variable para no volver a dar la bienvenida
+                                time.sleep(5)
+                                while respuesta:
+                                    # Preguntar si se desea salir o volver al menú
+                                    say_bye()
+                                    response = listen_response()
+                                    if response:
+                                        if "salir" in response.lower():
+                                            engine.say("Has seleccionado salir")
+                                            engine.runAndWait()
+                                            print("Has seleccionado salir.\n")
+                                            respuesta = False
+                                            salir = True
+                                            break
+                                        elif "volver al menú" in response.lower():
+                                            engine.say("Has seleccionado volver al menu")
+                                            engine.runAndWait()
+                                            print("Has seleccionado volver al menu.\n")
+                                            said_hello = False
+                                            start_time = None
+                                            break
+                                        else:
+                                            print("No se reconoció la opción.\n")
+                                            engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
+                                            engine.runAndWait()
+                            elif 'posgrado' in response.lower():
+                                engine.say("Has seleccionado posgrado")
+                                engine.say("Se mostrará un QR en la pantalla")
+                                engine.runAndWait()
+                                print("Has seleccionado Posgrado.\n")
+                                mostrar_img("Posgrado.jpeg", 0)
+                                said_hello = False
+                                time.sleep(5)
+                                while respuesta:
+                                    say_bye()
+                                    response = listen_response()
+                                    if response:
+                                        if "salir" in response.lower():
+                                            engine.say("Has seleccionado salir")
+                                            engine.runAndWait()
+                                            print("Has seleccionado salir.\n")
+                                            respuesta = False
+                                            salir = True
+                                            break
+                                        elif "volver al menú" in response.lower():
+                                            engine.say("Has seleccionado volver al menu")
+                                            engine.runAndWait()
+                                            print("Has seleccionado volver al menu.\n")
+                                            said_hello = False
+                                            start_time = None
+                                            break
+                                        else:
+                                            print("No se reconoció la opción.\n")
+                                            engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
+                                            engine.runAndWait()
+                            elif 'titulación' in response.lower():
+                                engine.say("Has seleccionado titulación")
+                                engine.say("Se mostrará un QR en la pantalla")
+                                engine.runAndWait()
+                                print("Has seleccionado Titulación.\n")
+                                mostrar_img("Titulacion.jpeg", 0)
+                                said_hello = False
+                                time.sleep(5)
+                                while respuesta:
+                                    say_bye()
+                                    response = listen_response()
+                                    if response:
+                                        if "salir" in response.lower():
+                                            engine.say("Has seleccionado salir")
+                                            engine.runAndWait()
+                                            print("Has seleccionado salir.\n")
+                                            respuesta = False
+                                            salir = True
+                                            break
+                                        elif "volver al menú" in response.lower():
+                                            engine.say("Has seleccionado volver al menu")
+                                            engine.runAndWait()
+                                            print("Has seleccionado volver al menu.\n")
+                                            said_hello = False
+                                            start_time = None
+                                            break
+                                        else:
+                                            print("No se reconoció la opción.\n")
+                                            engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
+                                            engine.runAndWait()
+                            elif 'servicio' in response.lower():
+                                engine.say("Has seleccionado servicio")
+                                engine.say("Se mostrará un QR en la pantalla")
+                                engine.runAndWait()
+                                print("Has seleccionado Servicio Social.\n")
+                                mostrar_img("Servicio.jpeg", 0)
+                                said_hello = False
+                                time.sleep(5)
+                                while respuesta:
+                                    say_bye()
+                                    response = listen_response()
+                                    if response:
+                                        if "salir" in response.lower():
+                                            engine.say("Has seleccionado salir")
+                                            engine.runAndWait()
+                                            print("Has seleccionado salir.\n")
+                                            respuesta = False
+                                            salir = True
+                                            break
+                                        elif "volver al menú" in response.lower():
+                                            engine.say("Has seleccionado volver al menu")
+                                            engine.runAndWait()
+                                            print("Has seleccionado volver al menu.\n")
+                                            said_hello = False
+                                            start_time = None
+                                            break
+                                        else:
+                                            print("No se reconoció la opción.\n")
+                                            engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
+                                            engine.runAndWait()
+                            elif 'residencias' in response.lower():
+                                engine.say("Has seleccionado residencias")
+                                engine.say("Se mostrará un QR en la pantalla")
+                                engine.runAndWait()
+                                print("Has seleccionado Residencias.\n")
+                                mostrar_img("Residencias.jpeg", 0)
+                                said_hello = False
+                                time.sleep(5)
+                                while respuesta:
+                                    say_bye()
+                                    response = listen_response()
+                                    if response:
+                                        if "salir" in response.lower():
+                                            engine.say("Has seleccionado salir")
+                                            engine.runAndWait()
+                                            print("Has seleccionado salir.\n")
+                                            respuesta = False
+                                            salir = True
+                                            break
+                                        elif "volver al menú" in response.lower():
+                                            engine.say("Has seleccionado volver al menu")
+                                            engine.runAndWait()
+                                            print("Has seleccionado volver al menu.\n")
+                                            said_hello = False
+                                            start_time = None
+                                            break
+                                        else:
+                                            print("No se reconoció la opción.\n")
+                                            engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
+                                            engine.runAndWait()
+                            elif 'salir' in response.lower():
+                                engine.say("Has seleccionado salir")
+                                engine.runAndWait()
+                                print("Has seleccionado salir.\n")
+                                break
+                            else:
+                                print("No se reconoció la opción.\n")
+                                engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
+                                engine.runAndWait()
+                                said_hello = False
+                                time.sleep(5)
+                    # Salir si se ha seleccionado salir
+                    if salir:
                         break
-                    else:
-                        print("No se reconoció la opción.\n")
-                        engine.say("Lo siento, no entendí. Por favor, elige una opción válida.")
-                        engine.runAndWait()
-                        said_hello = False
-                        time.sleep(5)
-            # Salir si se ha seleccionado salir
-            if salir:
-                break 
+
+
     # Actualizar el tiempo de la última respuesta
     else:
         # Verificar si ha pasado el tiempo de espera (5 segundos)
@@ -299,3 +366,6 @@ print("Bye")
 # Liberar la cámara y cerrar las ventanas
 cap.release()
 cv2.destroyAllWindows()
+
+
+#Segunda parte.
