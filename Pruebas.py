@@ -1,4 +1,3 @@
-# 
 # Descripción: Este programa permite la interacción con el usuario mediante comandos de voz y la detección de rostros.
 # Se muestra un menú con opciones que el usuario puede seleccionar mediante comandos de voz.
 # Se muestra una imagen en pantalla según la opción seleccionada.
@@ -66,7 +65,7 @@ def say_bye():
     engine.runAndWait()
 
 def mostrar_fondo():
-    img = cv2.imread("fondo.jpeg")  # Leemos el archivo almacenado en la carpeta local con el nombre indicado
+    img = cv2.imread("lastBack.jpeg")  # Leemos el archivo almacenado en la carpeta local con el nombre indicado
 
     # Creamos una ventana con el nombre "Foto" y configuramos para que sea pantalla completa
     cv2.namedWindow("fondo", cv2.WINDOW_NORMAL)
@@ -91,7 +90,7 @@ def mostrar_img(imga,tipo):
 
         cv2.waitKey(20000)  # Esperamos 1 minuto (60,000 milisegundos)
         cv2.destroyWindow("Foto")  # Cerramos la ventana del codigo QR y del mapa en si.
-    else:
+    elif tipo == 2:
         print("Paso por aca.")
         img = cv2.imread(imga)
 
@@ -109,6 +108,43 @@ def mostrar_img(imga,tipo):
 
         cv2.waitKey(20000)  # Esperamos 1 minuto (60,000 milisegundos)
         cv2.destroyWindow("qr")  # Cerramos la ventana del codigo QR y del mapa en si.
+    elif tipo == 3:
+        img = cv2.imread(imga)
+
+        # Obtener las dimensiones de la imagen
+        height, width, _ = img.shape
+
+        # Crear una ventana con el nombre "Imagen con QR"
+        cv2.namedWindow("estado", cv2.WINDOW_NORMAL)
+
+        # Redimensionar la ventana para que coincida con el tamaño de la imagen
+        cv2.resizeWindow("estado", width, height)
+
+        cv2.moveWindow("estado", 0, 0)
+
+        # Mostramos la imagen centrada en la ventana
+        cv2.imshow("estado", img)
+    else:
+        print("Paso por aca.")
+        img = cv2.imread(imga)
+
+        # Obtener las dimensiones de la imagen
+        height, width, _ = img.shape
+
+        # Crear una ventana con el nombre "Imagen con QR"
+        cv2.namedWindow("menu", cv2.WINDOW_NORMAL)
+
+        # Redimensionar la ventana para que coincida con el tamaño de la imagen
+        cv2.resizeWindow("menu", width, height)
+
+        cv2.moveWindow("estado", 50, 50)
+
+        # Mostramos la imagen centrada en la ventana
+        cv2.imshow("menu", img)
+
+
+
+
 
 
 
@@ -148,6 +184,7 @@ mostrar_fondo()
 
 
 while True:
+    mostrar_img("analizandoD.jpeg", 3)
     # Leer el fotograma
     ret, frame = cap.read()
     # Convertir a escala de grises
@@ -168,6 +205,9 @@ while True:
                     # Dar la binevenida si se detecta un rostro
                     respuesta = True
                     if not said_hello:
+                        cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
+                        mostrar_img("buscandoD.jpeg", 3)
+                        mostrar_img("menusD.jpeg", 4)
                         say_hello()  # Dar la bienvenida y mostrar las opciones
                         salir = False  # Variable para controlar si se selecciona salir
                         said_hello = True  # Actualizar la variable para no volver a dar la bienvenida
@@ -176,6 +216,8 @@ while True:
                         response = listen_response()
                         # Verificar si se detectó una respuesta
                         if response:
+                            cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
+                            mostrar_img("esperandoD.jpeg", 3)
                             # Verificar la respuesta del usuario
                             if 'mapa del edificio' in response.lower():
                                 # Mostrar el mapa del edificio
@@ -184,14 +226,17 @@ while True:
                                 engine.runAndWait()
                                 print("Has seleccionado Mapa del edificio.\n")
                                 # Mostrar la imagen del mapa del edificio
-                                mostrar_img("Croquis.jpeg", 1)
+                                mostrar_img("lastCroquis.jpeg", 1)
                                 # Actualizar la variable para no volver a dar la bienvenida
                                 time.sleep(5)
+                                cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
+
                                 while respuesta:
                                     # Preguntar si se desea salir o volver al menú
                                     say_bye()
                                     response = listen_response()
                                     if response:
+                                        cv2.destroyWindow("menu")  # Cerramos la ventana del codigo QR y del mapa en si.
                                         if "salir" in response.lower():
                                             engine.say("Has seleccionado salir")
                                             engine.runAndWait()
@@ -215,13 +260,16 @@ while True:
                                 engine.say("Se mostrará un QR en la pantalla")
                                 engine.runAndWait()
                                 print("Has seleccionado Posgrado.\n")
-                                mostrar_img("Posgrado.jpeg", 0)
+                                mostrar_img("Posgrado.jpeg", 2)
                                 said_hello = False
                                 time.sleep(5)
+                                cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
+
                                 while respuesta:
                                     say_bye()
                                     response = listen_response()
                                     if response:
+
                                         if "salir" in response.lower():
                                             engine.say("Has seleccionado salir")
                                             engine.runAndWait()
@@ -245,13 +293,16 @@ while True:
                                 engine.say("Se mostrará un QR en la pantalla")
                                 engine.runAndWait()
                                 print("Has seleccionado Titulación.\n")
-                                mostrar_img("Titulacion.jpeg", 0)
+                                mostrar_img("Titulacion.jpeg", 2)
                                 said_hello = False
                                 time.sleep(5)
+                                cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
+
                                 while respuesta:
                                     say_bye()
                                     response = listen_response()
                                     if response:
+                                        cv2.destroyWindow("menu")  # Cerramos la ventana del codigo QR y del mapa en si.
                                         if "salir" in response.lower():
                                             engine.say("Has seleccionado salir")
                                             engine.runAndWait()
@@ -275,13 +326,17 @@ while True:
                                 engine.say("Se mostrará un QR en la pantalla")
                                 engine.runAndWait()
                                 print("Has seleccionado Servicio Social.\n")
-                                mostrar_img("Servicio.jpeg", 0)
+                                mostrar_img("Servicio.jpeg", 2)
                                 said_hello = False
                                 time.sleep(5)
+                                cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
+
                                 while respuesta:
+
                                     say_bye()
                                     response = listen_response()
                                     if response:
+                                        cv2.destroyWindow("menu")  # Cerramos la ventana del codigo QR y del mapa en si.
                                         if "salir" in response.lower():
                                             engine.say("Has seleccionado salir")
                                             engine.runAndWait()
@@ -305,13 +360,16 @@ while True:
                                 engine.say("Se mostrará un QR en la pantalla")
                                 engine.runAndWait()
                                 print("Has seleccionado Residencias.\n")
-                                mostrar_img("Residencias.jpeg", 0)
+                                mostrar_img("Residencias.jpeg", 2)
                                 said_hello = False
                                 time.sleep(5)
+                                cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
+
                                 while respuesta:
                                     say_bye()
                                     response = listen_response()
                                     if response:
+                                        cv2.destroyWindow("menu")  # Cerramos la ventana del codigo QR y del mapa en si.
                                         if "salir" in response.lower():
                                             engine.say("Has seleccionado salir")
                                             engine.runAndWait()
@@ -341,6 +399,7 @@ while True:
                                 engine.runAndWait()
                                 said_hello = False
                                 time.sleep(5)
+                                cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.
                     # Salir si se ha seleccionado salir
                     if salir:
                         break
@@ -366,6 +425,3 @@ print("Bye")
 # Liberar la cámara y cerrar las ventanas
 cap.release()
 cv2.destroyAllWindows()
-
-
-#Segunda parte.
