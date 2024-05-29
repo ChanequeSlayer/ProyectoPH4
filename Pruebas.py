@@ -260,7 +260,7 @@ while True:
                                 engine.say("Se mostrará un QR en la pantalla")
                                 engine.runAndWait()
                                 print("Has seleccionado Posgrado.\n")
-                                mostrar_img("Posgrado.jpeg", 2)
+                                mostrar_img("Posgrado.png", 2)
                                 said_hello = False
                                 time.sleep(5)
                                 cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
@@ -293,7 +293,7 @@ while True:
                                 engine.say("Se mostrará un QR en la pantalla")
                                 engine.runAndWait()
                                 print("Has seleccionado Titulación.\n")
-                                mostrar_img("Titulacion.jpeg", 2)
+                                mostrar_img("Titulacion.png", 2)
                                 said_hello = False
                                 time.sleep(5)
                                 cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
@@ -326,7 +326,7 @@ while True:
                                 engine.say("Se mostrará un QR en la pantalla")
                                 engine.runAndWait()
                                 print("Has seleccionado Servicio Social.\n")
-                                mostrar_img("Servicio.jpeg", 2)
+                                mostrar_img("Servicio.png", 2)
                                 said_hello = False
                                 time.sleep(5)
                                 cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
@@ -360,7 +360,7 @@ while True:
                                 engine.say("Se mostrará un QR en la pantalla")
                                 engine.runAndWait()
                                 print("Has seleccionado Residencias.\n")
-                                mostrar_img("Residencias.jpeg", 2)
+                                mostrar_img("Residencias.png", 2)
                                 said_hello = False
                                 time.sleep(5)
                                 cv2.destroyWindow("estado")  # Cerramos la ventana del codigo QR y del mapa en si.z
